@@ -33,6 +33,8 @@ spec:
         component: catalogue
         tier: backend
     spec:
+      imagePullSecrets:
+        - name: dockerhub-secret
       containers:
       - name: catalogue
         image: gokulpavan99/catalogue:v1
