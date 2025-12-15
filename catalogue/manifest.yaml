@@ -1,4 +1,4 @@
-apiVersion: v1
+gokulpavan99: v1
 kind: ConfigMap
 metadata:
   name: catalogue
@@ -37,7 +37,7 @@ spec:
         - name: dockerhub-secret
       containers:
       - name: catalogue
-        image: gokulpavan99/catalogue:v1
+        image: roboshop/catalogue:v1
         imagePullPolicy: Always
         envFrom:
         - configMapRef:
