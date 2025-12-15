@@ -1,4 +1,4 @@
-apiVersion: apps/v1
+1
 kind: Deployment
 metadata:
   name: mongodb
@@ -26,5 +26,4 @@ spec:
     spec:
       containers:
       - name: mongodb
-        image: gokulpavan99/mongodb:v1
-        
+        image: mongo:4.4
