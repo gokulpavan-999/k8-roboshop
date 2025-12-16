@@ -1,18 +1,9 @@
-              
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: catalogue
-  namespace: roboshop
-data:
-  MONGO: "true"
-  MONGO_URL: "mongodb://mongodb:27017/catalogue"
----
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: catalogue
   namespace: roboshop
+  # these are replica set labels
   labels:
     project: roboshop
     component: catalogue
@@ -20,10 +11,12 @@ metadata:
 spec:
   replicas: 1
   selector:
+    # these labels are used to select pods
     matchLabels:
       project: roboshop
       component: catalogue
       tier: backend
+  # pod definition
   template:
     metadata:
       labels:
@@ -31,30 +24,28 @@ spec:
         component: catalogue
         tier: backend
     spec:
-      imagePullSecrets:
-        - name: dockerhub-secret
       containers:
-        - name: catalogue
-          image: roboshop/catalogue:v1
-          imagePullPolicy: Always
-          envFrom:
-            - configMapRef:
-                name: catalogue
-          ports:
-            - name: http
-              containerPort: 8080
-          readinessProbe:
-            httpGet:
-              path: /health
-              port: http
-            initialDelaySeconds: 10
-            periodSeconds: 15
-          livenessProbe:
-            httpGet:
-              path: /health
-              port: http
-            initialDelaySeconds: 20
-            periodSeconds: 15
+      - name: catalogue
+        image: gokulpavan99/catalogue:v1
+        imagePullPolicy: Always
+        envFrom:
+        - configMapRef:
+            name: catalogue
+        ports:
+        - name: liveness-port
+          containerPort: 8080
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: liveness-port
+          failureThreshold: 1
+          periodSeconds: 15
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: liveness-port
+          failureThreshold: 1
+          periodSeconds: 15
 ---
 apiVersion: v1
 kind: Service
@@ -68,5 +59,5 @@ spec:
     tier: backend
   ports:
     - protocol: TCP
-      port: 8080
-      targetPort: 8080
+      port: 8080 # service port
+      targetPort: 8080 # container port
